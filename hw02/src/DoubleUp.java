@@ -4,8 +4,13 @@ public class DoubleUp {
      * Example: doubleUp("hello") -> "hheelllloo"
      */
    public static String doubleUp(String s) {
-      // TODO: Fill in this function
-      return null;
+      int len = s.length();
+      String output = "";
+      for (int i = 0; i < len; i ++) {
+         output += s.charAt(i);
+         output += s.charAt(i);
+      }
+      return output;
    }
    
    public static void main(String[] args) {
