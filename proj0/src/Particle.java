@@ -47,7 +47,6 @@ public class Particle {
             this.moveInto(p);
         }
     }
-
     public void flow(Map<Direction, Particle> neighbors) {
         int random_number = StdRandom.uniformInt(3);
         switch(random_number) {
