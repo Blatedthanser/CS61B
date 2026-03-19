@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.StdRandom;
 import net.sf.saxon.expr.GeneralComparison;
 
+import javax.servlet.http.Part;
 import java.awt.*;
 import java.util.Map;
 
@@ -18,19 +19,48 @@ public class Particle {
 
     public Particle(ParticleFlavor flavor) {
         this.flavor = flavor;
-        lifespan = -1; // All human created particles have no lifespan
+        if (flavor == ParticleFlavor.PLANT || flavor == ParticleFlavor.FLOWER || flavor == ParticleFlavor.FIRE) {
+            lifespan = LIFESPANS.get(flavor);
+        } else {
+            lifespan = -1;
+        }
+    }
+    public void decrementLifespan() {
+        if (this.lifespan > 0) {
+            this.lifespan --;
+        }
+        else if (this.lifespan == 0) {
+            this.flavor = ParticleFlavor.EMPTY;
+            this.lifespan = -1;
+        }
     }
 
+
     public Color color() {
+        if (flavor == ParticleFlavor.FLOWER) {
+            double ratio = (double) Math.max(0, Math.min(lifespan, FLOWER_LIFESPAN)) / FLOWER_LIFESPAN;
+            int r = 120 + (int) Math.round((255 - 120) * ratio);
+            int g = 70 + (int) Math.round((141 - 70) * ratio);
+            int b = 80 + (int) Math.round((161 - 80) * ratio);
+            return new Color(r, g, b);
+        }
+        if (flavor == ParticleFlavor.PLANT) {
+            double ratio = (double) Math.max(0, Math.min(lifespan, PLANT_LIFESPAN)) / PLANT_LIFESPAN;
+            int g = 120 + (int) Math.round((255 - 120) * ratio);
+            return new Color(0, g, 0);
+        }
+        if (flavor == ParticleFlavor.FIRE) {
+            double ratio = (double) Math.max(0, Math.min(lifespan, FIRE_LIFESPAN)) / FIRE_LIFESPAN;
+            int r = (int) Math.round(255 * ratio);
+            return new Color(r, 0, 0);
+        }
         return switch(this.flavor) {
             case ParticleFlavor.EMPTY -> Color.BLACK;
             case ParticleFlavor.SAND -> Color.YELLOW;
             case ParticleFlavor.BARRIER -> Color.GRAY;
             case ParticleFlavor.WATER -> Color.BLUE;
             case ParticleFlavor.FOUNTAIN -> Color.CYAN;
-            case ParticleFlavor.PLANT -> new Color(0, 255, 0);
-            case ParticleFlavor.FIRE -> new Color(255, 0, 0);
-            case ParticleFlavor.FLOWER -> new Color(255, 141, 161);
+            default -> null;
         };
     }
 
@@ -72,7 +102,7 @@ public class Particle {
         assert(this.flavor == ParticleFlavor.PLANT || this.flavor == ParticleFlavor.FLOWER);
         //Only plants and flowers can grow.
 
-        int random_number = StdRandom.uniformInt(10);
+        int random_number = StdRandom.uniformInt(20);
         switch(random_number) {
             case 0 -> {
                 Particle up_neighbor = neighbors.get(Direction.UP);
@@ -100,6 +130,15 @@ public class Particle {
     }
 
     public void burn(Map<Direction, Particle> neighbors) {
+        for (Particle n : neighbors.values()) {
+            if (n.flavor == ParticleFlavor.PLANT || n.flavor == ParticleFlavor.FLOWER) {
+                int random_number = StdRandom.uniformInt(5);
+                if (random_number <= 1) {
+                    n.flavor = ParticleFlavor.FIRE;
+                    n.lifespan = FIRE_LIFESPAN;
+                }
+            }
+        }
     }
 
     public void action(Map<Direction, Particle> neighbors) {
@@ -114,6 +153,9 @@ public class Particle {
         }
         if (this.flavor == ParticleFlavor.PLANT || this.flavor == ParticleFlavor.FLOWER) {
             this.grow(neighbors);
+        }
+        if (this.flavor == ParticleFlavor.FIRE) {
+            this.burn(neighbors);
         }
     }
 }

@@ -15,7 +15,7 @@ public class TestParticleSimulator {
         // Arrange: A 3x5 grid with sand (s) suspended over empty space (d)
         // and a barrier (b) at the bottom.
         String initialBoard = """
-            s.s
+            s.s 
             s.s
             ...
             ...
