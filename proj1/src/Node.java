@@ -7,6 +7,11 @@ public class Node<T> {
         previous = null;
         next = null;
     }
+    public Node(T data_) {
+        data = data_;
+        previous = null;
+        next = null;
+    }
     public Node(T data_, Node<T> previous_, Node<T> next_) {
         data = data_;
         previous = previous_;
