@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class LinkedListDeque61B<T> implements Deque61B<T>{
@@ -10,7 +11,7 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
         size = 0;
         sentinel = new Node<T>();
         sentinel.next = sentinel;
-        sentinel.previous = sentinel;
+        sentinel.prev = sentinel;
     }
 
     /**
@@ -21,8 +22,9 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
     @Override
     public void addFirst(T x) {
         Node<T> newNode = new Node<T>(x, sentinel, sentinel.next);
-        sentinel.next.previous = newNode;
+        sentinel.next.prev = newNode;
         sentinel.next = newNode;
+        size++;
     }
 
     /**
@@ -32,9 +34,10 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public void addLast(T x) {
-        Node<T> newNode = new Node<T>(x, sentinel.previous, sentinel);
-        sentinel.previous.next = newNode;
-        sentinel.previous = newNode;
+        Node<T> newNode = new Node<T>(x, sentinel.prev, sentinel);
+        sentinel.prev.next = newNode;
+        sentinel.prev = newNode;
+        size++;
     }
 
     /**
@@ -44,7 +47,13 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public List<T> toList() {
-        return List.of();
+        List<T> returnList = new ArrayList<>();
+        Node<T> node = sentinel.next;
+        for (int i = 0; i < size; i++) {
+            returnList.add(node.data);
+            node = node.next;
+        }
+        return returnList;
     }
 
     /**
@@ -54,7 +63,7 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     /**
@@ -64,7 +73,7 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     /**
@@ -74,7 +83,7 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public T getFirst() {
-        return null;
+        return sentinel.next.data;
     }
 
     /**
@@ -84,7 +93,7 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public T getLast() {
-        return null;
+        return sentinel.prev.data;
     }
 
     /**
@@ -94,7 +103,13 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public T removeFirst() {
-        return null;
+        if (sentinel.next == null) {
+            return null;
+        }
+        T dataRemoved = sentinel.next.data;
+        sentinel.next = sentinel.next.next;
+        size--;
+        return dataRemoved;
     }
 
     /**
@@ -104,7 +119,13 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public T removeLast() {
-        return null;
+        if (sentinel.prev == null) {
+            return null;
+        }
+        T dataRemoved = sentinel.prev.data;
+        sentinel.prev = sentinel.prev.prev;
+        size--;
+        return dataRemoved;
     }
 
     /**
@@ -118,7 +139,11 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public T get(int index) {
-        return null;
+        Node<T> node = sentinel.next;
+        for (int i = 0; i < index; i++){
+            node = node.next;
+        }
+        return node.data;
     }
 
     /**
@@ -131,15 +156,28 @@ public class LinkedListDeque61B<T> implements Deque61B<T>{
      */
     @Override
     public T getRecursive(int index) {
-        return null;
+        return getNodeAt(sentinel.next, index);
     }
 
+    /**
+     * Get the data of node at {@code index}, starting at {@code first}
+     * @param first The first node
+     * @param index The index of desired node starting from first
+     * @return The data of the node at {@code index}
+     */
+    private T getNodeAt(Node<T> first, int index) {
+        if (index == 0) {
+            return first.data;
+        }
+        return getNodeAt(first.next, index - 1);
+    }
 
     public static void main(String[] args) {
         Deque61B<Integer> lld = new LinkedListDeque61B<>();
         lld.addLast(0);   // [0]
         lld.addLast(1);   // [0, 1]
         lld.addFirst(-1); // [-1, 0, 1]
+        IO.print(lld.toList());
     }
 
 
