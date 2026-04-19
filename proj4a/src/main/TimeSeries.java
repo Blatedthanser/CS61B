@@ -1,5 +1,9 @@
 package main;
 
+import java.lang.classfile.CompoundElement;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -25,20 +29,28 @@ public class TimeSeries extends TreeMap<Integer, Double> {
     }
 
     /**
+     * Creates a copy of TS.
+     */
+    public TimeSeries(TimeSeries ts) {
+        super(ts);
+    }
+
+    /**
      * Creates a copy of TS, but only between STARTYEAR and ENDYEAR,
      * inclusive of both end points.
      */
     public TimeSeries(TimeSeries ts, int startYear, int endYear) {
         super();
-        // TODO: Fill in this constructor.
+        this.putAll(ts.subMap(startYear, endYear + 1));
     }
 
     /**
      *  Returns all years for this time series in ascending order.
      */
     public List<Integer> years() {
-        // TODO: Fill in this method.
-        return null;
+        List<Integer> keys = new ArrayList<>(this.keySet());
+        //keys.sort(Comparator.naturalOrder());
+        return keys;
     }
 
     /**
@@ -46,8 +58,12 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      *  order of years().
      */
     public List<Double> data() {
-        // TODO: Fill in this method.
-        return null;
+        List<Integer> keys = new ArrayList<>(this.keySet());
+        List<Double> values = new ArrayList<>();
+        for (Integer key : keys) {
+            values.add(this.get(key));
+        }
+        return values;
     }
 
     /**
@@ -60,8 +76,12 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * should store the value from the TimeSeries that contains that year.
      */
     public TimeSeries plus(TimeSeries ts) {
-        // TODO: Fill in this method.
-        return null;
+        TimeSeries copy = new TimeSeries(this);
+        List<Integer> keys = new ArrayList<>(ts.keySet());
+        for (Integer key : keys) {
+            copy.merge(key, ts.get(key), Double::sum);
+        }
+        return copy;
     }
 
     /**
@@ -74,10 +94,14 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * If TS has a year that is not in this TimeSeries, ignore it.
      */
     public TimeSeries dividedBy(TimeSeries ts) {
-        // TODO: Fill in this method.
-        return null;
+        TimeSeries copy = new TimeSeries(this);
+        List<Integer> thisYears = copy.years();
+        for (Integer year : thisYears) {
+            if (!ts.containsKey(year)) {
+                throw new IllegalArgumentException();
+            }
+            copy.merge(year, ts.get(year), (a, b) -> a / b);
+        }
+        return copy;
     }
-
-    // TODO: Add any private helper methods.
-    // TODO: Remove all TODO comments before submitting.
 }
