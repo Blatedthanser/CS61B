@@ -18,6 +18,11 @@ public class DummyHistoryTextHandler extends NgordnetQueryHandler {
         response += "Words: " + q.words() + "\n";
         response += "Start Year: " + q.startYear() + "\n";
         response += "End Year: " + q.endYear() + "\n";
-        return response;
+
+        String trueResponse = "";
+        for (String word : q.words()) {
+            trueResponse += word + ": " + "..." + "\n";
+        }
+        return trueResponse;
     }
 }
