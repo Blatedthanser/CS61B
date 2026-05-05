@@ -24,7 +24,8 @@ public class Main {
     public static final String HYPONYMS_SIZE1000_FILE = PREFIX +  "hyponyms_size1000.txt";
     public static final String SYNSETS_SIZE82191_FILE = PREFIX + "synsets_size82191.txt";
     public static final String HYPONYMS_SIZE82191_FILE = PREFIX +  "hyponyms_size82191.txt";
-
+    public static final String SYNSETS_SIZE10_FILE = PREFIX + "synsets_size10.txt";
+    public static final String HYPONYMS_SIZE10_FILE = PREFIX + "hyponyms_size10.txt";
 
     static {
         LoggerFactory.getLogger(Main.class).info("\033[1;38mChanging text color to white");
@@ -33,8 +34,7 @@ public class Main {
         NgordnetServer hns = new NgordnetServer();
 
         hns.startUp();
-        // TODO: modify HyponymsHandler
-        // hns.register("hyponyms", new HyponymsHandler());
+        hns.register("hyponyms", new HyponymsHandler(SYNSETS_SIZE10_FILE, HYPONYMS_SIZE10_FILE));
 
         System.out.println("Finished server startup! Visit http://localhost:4567/ngordnet.html");
     }

@@ -29,7 +29,6 @@ public class NGramMap {
     public NGramMap(String wordHistoryFilename, String yearHistoryFilename) {
         In in = new In(wordHistoryFilename);
         int i = 1;
-        in.readLine(); //Skip the first line
         while (!in.isEmpty()) {
             i += 1;
             String nextLine = in.readLine();
